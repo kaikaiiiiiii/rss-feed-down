@@ -1,0 +1,2 @@
+# SourceName, URL, useProxy
+DMHY,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
