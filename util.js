@@ -60,9 +60,11 @@ class TransmissionRPC {
                 auth: this.auth
             });
             this.sessionId = response.headers['x-transmission-session-id'];
+            this.downloadDir = response.data.arguments["download-dir"]
         } catch (error) {
             if (error.response && error.response.status === 409) {
                 this.sessionId = error.response.headers['x-transmission-session-id'];
+                this.initSession()
             } else {
                 console.error('error on session-get', error.message);
             }
