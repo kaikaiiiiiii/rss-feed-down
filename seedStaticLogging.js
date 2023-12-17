@@ -4,7 +4,7 @@ const path = require('path');
 let selectedFields = ["hashString", "id", "status", "name", "uploadedEver", "totalSize", "dateCreated", "isPrivate", "isFinished", "addedDate"] // there's another segment "datePublish" from history
 
 const transmissionOptions = {
-    hostname: '192.168.0.49', port: 9091,
+    hostname: '192.168.0.49', port: 9091, // Transmission Daemon 的服务器 IP 和端口
     path: '/transmission/rpc',  // Transmission Daemon 的 RPC 路径
     auth: { username: 'username', password: 'password' },
     fields: selectedFields
@@ -25,7 +25,7 @@ const transmissionOptions = {
 async function main() {
 
     let TMS = new TransmissionRPC(transmissionOptions)
-    await TMS.updateSessionId()
+    await TMS.initSession()
     let torrents = await TMS.getTorrentsInfo(selectedFields)
     let history = readCSV(path.join(__dirname, 'history.csv'));
 

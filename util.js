@@ -50,9 +50,10 @@ class TransmissionRPC {
         this.auth = config.auth
         this.retry = config.retry || 3
         this.fields = config.fields || ["hashString", "id", "status", "name", "isPrivate"]
+        this.downloadDir = ""
     }
 
-    async updateSessionId() {
+    async initSession() {
         try {
             const response = await axios.post(this.rpcURL, {
                 method: 'session-get',

@@ -5,14 +5,10 @@ let Parser = require('rss-parser');
 let path = require('path');
 let parser = new Parser();
 let { Delay, readCSV, writeCSV, TransmissionRPC } = require('./util.js')
+let config = require('./config.js')
 
 // ========== config zone ==========
-const clash = tunnel.httpsOverHttp({
-    proxy: {
-        host: '192.168.0.111',
-        port: 7890
-    }
-});
+const TNL = tunnel.httpsOverHttp(config);
 
 const transmissionOptions = {
     hostname: '192.168.0.49', port: 9091,
@@ -47,7 +43,7 @@ writeCSV(path.join(__dirname, 'history.csv.bak'), history)
 // main function
 async function main() {
     let TMS = new TransmissionRPC(transmissionOptions)
-    await TMS.updateSessionId()
+    await TMS.initSession()
 
     for (let i = 0; i < book.length; i++) {
         console.log(book[i])
@@ -65,7 +61,7 @@ main()
 // function: read rss feeds and download torrent files or magnet links
 async function readRSS(rss, TMS) {
     let config = { proxy: false }
-    if (rss.useProxy) config.httpsAgent = clash;
+    if (rss.useProxy) config.httpsAgent = TNL;
     axios.get(rss.url, config).then((response) => {
         parser.parseString(response.data)
             .then(async (feed) => {
@@ -89,13 +85,13 @@ async function readRSS(rss, TMS) {
                         try {
                             if (item.torrentLink.startsWith('magnet') || rss.useProxy) {
                                 // tell tms url or magnet, let it download torrent file itself
-                                await TMS.addTorrent({ filename: item.torrentLink })
+                                await TMS.addTorrent({ filename: item.torrentLink, labels: item.source })
                                 await Delay(500)
                             } else {
                                 // direct download torrent file through proxy then upload to transmission
                                 let response = await axios.get(item.torrentLink, Object.assign({ responseType: 'arraybuffer' }, config))
                                 let base64 = Buffer.from(response.data, 'binary').toString('base64')
-                                await TMS.addTorrent({ metainfo: base64 })
+                                await TMS.addTorrent({ metainfo: base64, labels: item.source })
                                 await Delay(5000)
                             }
                             history.push(item)

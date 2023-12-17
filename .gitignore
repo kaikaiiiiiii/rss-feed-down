@@ -2,3 +2,5 @@ node_modules
 rssFeeds.txt
 *.csv
 *.csv.bak
+config.js
+*.torrent
