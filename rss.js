@@ -5,7 +5,7 @@ let Parser = require('rss-parser');
 let path = require('path');
 let parser = new Parser();
 let { Delay, readCSV, writeCSV, TransmissionRPC } = require('./util.js')
-let config = require('./config.js')
+let config = fs.existsSync('./config.js') ? require('./config.js') : require('./config.sample.js')
 
 // ========== config zone ==========
 const TNL = tunnel.httpsOverHttp(config);
