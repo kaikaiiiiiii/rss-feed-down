@@ -1,6 +1,3 @@
-# SourceName, URL, useProxy
-# MTeam,https://kp.m-team.cc/torrentrss.php?https=1&rows=50&linktype=dl&passkey=bf920719c352388d0949ff91ff6c1920&inclbookmarked=1
-# FSM,https://api.fsm.name/Rss/me?passkey=0716cc902d2717a90c13369b91f7afec
-# HDC,https://hdchina.org/torrentrss.php?rows=50&linktype=dl&passkey=5b4a52070acaa244b5ef235020039d0f&rsscart=1
-# DMHY,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
-nyaa,https://sukebei.nyaa.si/?page=rss&q=fc2+ppv&c=0_0&f=0,true
+# SourceName, PT,URL, useProxy
+DMHY,bt,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
+U2,pt,https://ut.dmhy.org/torrentrss.php?passkey=ffffffffffffffffffffffffffffffff&rsscart=1

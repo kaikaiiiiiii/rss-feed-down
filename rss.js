@@ -28,7 +28,7 @@ let book = fs.readFileSync(path.join(__dirname, 'rssFeeds.txt'), 'utf8')
     .map(l => l.trim())
     .filter(l => l.length > 0 && !l.startsWith('#'))
     .map(l => l.split(','))
-    .map(l => ({ name: l[0], url: l[1], useProxy: l[2] !== undefined }));
+    .map(l => ({ name: l[0], url: l[2], useProxy: l[3] !== undefined, pt: l[1].toLowerCase() !== 'bt' || l[1].toLowerCase() !== '0' || l[1].toLowerCase() !== 'false' }));
 
 // read rss history read before, avoid duplicate download on same torrent    
 let history = readCSV(path.join(__dirname, 'history.csv'))
@@ -44,6 +44,9 @@ writeCSV(path.join(__dirname, 'history.csv.bak'), history)
 async function main() {
     let TMS = new TransmissionRPC(transmissionOptions)
     await TMS.initSession()
+    let obj = await TMS.getSessionInfo()
+    TMS.downloadDir = obj["download-dir"]
+    let btpath = path.join(TMS.downloadDir, "..", "BT")
 
     try {
         await Promise.all(book.map(async (rss) => {
@@ -85,17 +88,17 @@ async function readRSS(rss, TMS) {
                         };
                     });
                     const newItems = list.filter(item => !history.some(e => e.guid == item.guid));
-                    console.log(newItems)
+                    const downpath = rss.pt ? TMS.downloadDir : btpath
                     if (newItems.length > 0) {
                         for (const item of newItems) {
                             try {
                                 if (item.torrentLink.startsWith('magnet') || rss.useProxy == false) {
-                                    await TMS.addTorrent({ filename: item.torrentLink, labels: [item.source] });
+                                    await TMS.addTorrent({ filename: item.torrentLink, labels: [item.source], "download-dir": downpath });
                                     await Delay(500);
                                 } else {
                                     const response = await axios.get(item.torrentLink, Object.assign({ responseType: 'arraybuffer' }, config));
                                     const base64 = Buffer.from(response.data, 'binary').toString('base64');
-                                    await TMS.addTorrent({ metainfo: base64, labels: [item.source] });
+                                    await TMS.addTorrent({ metainfo: base64, labels: [item.source], "download-dir": downpath });
                                     await Delay(5000);
                                 }
                                 history.push(item);

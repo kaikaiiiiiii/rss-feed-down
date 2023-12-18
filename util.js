@@ -4,16 +4,16 @@ const papa = require('papaparse')
 const axios = require('axios')
 
 function magicMath(list) {
-    let A = list.map(e => formula(e.time, e.nodes, e.size))
+    let A = list.map(e => formulaA(e.week, e.nodes, e.size))
     let B = 50 / Math.PI * Math.atan(A / 300)
     let C = Math.max(14, list.length) * 0.7
     return B + C
 }
 
-function formula(Time, Nodes, Size) {
+function formulaA(Week, Nodes, Size) {
     let S = Size / 1024 / 1024 / 1024 // GB
     let N = 1 + Math.sqrt(2) * (10 ** ((1 - Nodes) / 6))
-    let T = 1 - 10 ** (-Time / 4)
+    let T = 1 - 10 ** (-Week / 4)
     return S * N * T
 }
 
@@ -64,12 +64,40 @@ class TransmissionRPC {
         } catch (error) {
             if (error.response && error.response.status === 409) {
                 this.sessionId = error.response.headers['x-transmission-session-id'];
-                this.initSession()
             } else {
-                console.error('error on session-get', error.message);
+                throw error;
             }
         }
     }
+
+    async getSessionInfo() {
+        try {
+            const response = await axios.post(this.rpcURL, {
+                method: 'session-get',
+            }, {
+                auth: this.auth,
+                headers: { 'X-Transmission-Session-Id': this.sessionId }
+            });
+            return response.data.arguments
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async moveTorrent(items, newPath) {
+        try {
+            await axios.post(this.rpcURL, {
+                method: 'torrent-set-location',
+                arguments: { ids: items.map(e => e.id), location: newPath, move: true }
+            }, {
+                auth: this.auth,
+                headers: { 'X-Transmission-Session-Id': this.sessionId }
+            });
+        } catch (error) {
+            throw error
+        }
+    }
+
 
     async getTorrentsInfo() {
         try {
@@ -81,11 +109,9 @@ class TransmissionRPC {
                 headers: { 'X-Transmission-Session-Id': this.sessionId }
             });
             let torrents = response.data.arguments.torrents
-
             return torrents
         } catch (error) {
-            console.error('error on torrent-get', error.message);
-            return []
+            throw error
         }
     }
 
@@ -100,8 +126,7 @@ class TransmissionRPC {
             });
             return result
         } catch (error) {
-            console.error('error on torrent-remove', error.message);
-            return false
+            throw error
         }
     }
 
@@ -116,18 +141,10 @@ class TransmissionRPC {
             });
             return true
         } catch (error) {
-            console.error('error on torrent-add', error.message);
-            return false
+            throw error
         }
     }
-
-    exit() {
-        process.exit(0)
-    }
-
 }
-
-
 
 
 module.exports = {
