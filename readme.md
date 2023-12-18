@@ -62,14 +62,17 @@ U2,PT,https://ut.dmhy.org/torrentrss.php?passkey=fffffffffffffffffffffffffffffff
 
 This script is used to download torrents from rss feeds. It is designed to be used with transmission. It will read rssFeeds.txt, download all seeds in all rss NOT in history log, and add them to transmission. It will also update the history log with the new seeds.
 
-#### rssFeeds.txt
+#### rssFeeds.sample.txt
 
 This file contains the rss feeds to be read. Each line is a new feed. The format is as follows:
 ```
-# SourceName, URL, useProxy
-DMHY,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
+# SourceName, bt or pt, URL, useProxy
+DMHY,BT,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
+U2,PT,https://ut.dmhy.org/torrentrss.php?passkey=ffffffffffffffffffffffffffffffff&rsscart=1
 ```
 Add a '#' at the beginning of a line to comment it. Either it's not a rss feed, or a rss you don't want to download.
+
+**Rename it to rssFeeds.txt before use it.**
 
 #### config.sample.js
 
