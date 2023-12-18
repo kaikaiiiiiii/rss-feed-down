@@ -28,7 +28,12 @@ let book = fs.readFileSync(path.join(__dirname, 'rssFeeds.txt'), 'utf8')
     .map(l => l.trim())
     .filter(l => l.length > 0 && !l.startsWith('#'))
     .map(l => l.split(','))
-    .map(l => ({ name: l[0], url: l[2], useProxy: l[3] !== undefined, pt: l[1].toLowerCase() !== 'bt' || l[1].toLowerCase() !== '0' || l[1].toLowerCase() !== 'false' }));
+    .map(l => ({
+        name: l[0],
+        pt: l[1].toLowerCase() !== 'bt' && l[1].toLowerCase() !== '0' && l[1].toLowerCase() !== 'false',
+        url: l[2],
+        useProxy: l[3] !== undefined,
+    }));
 
 // read rss history read before, avoid duplicate download on same torrent    
 let history = readCSV(path.join(__dirname, 'history.csv'))
@@ -46,7 +51,7 @@ async function main() {
     await TMS.initSession()
     let obj = await TMS.getSessionInfo()
     TMS.downloadDir = obj["download-dir"]
-    let btpath = path.join(TMS.downloadDir, "..", "BT")
+    TMS.btpath = path.join(TMS.downloadDir, "..", "BT")
 
     try {
         await Promise.all(book.map(async (rss) => {
@@ -88,7 +93,7 @@ async function readRSS(rss, TMS) {
                         };
                     });
                     const newItems = list.filter(item => !history.some(e => e.guid == item.guid));
-                    const downpath = rss.pt ? TMS.downloadDir : btpath
+                    const downpath = rss.pt ? TMS.downloadDir : TMS.btpath
                     if (newItems.length > 0) {
                         for (const item of newItems) {
                             try {
