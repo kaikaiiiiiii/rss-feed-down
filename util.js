@@ -120,6 +120,11 @@ class TransmissionRPC {
             return false
         }
     }
+
+    exit() {
+        process.exit(0)
+    }
+
 }
 
 

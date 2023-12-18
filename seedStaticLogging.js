@@ -57,7 +57,9 @@ async function main() {
     // only keep data of torrent that are now in transmission
     data = data.filter(e => nowdata.some(t => t.hashString == e.hashString))
         .concat(nowdata)
+    console.log(data)
     writeCSV(path.join(__dirname, 'seedStatic.csv'), data)
+    process.exit(0)
 }
 
 main()
