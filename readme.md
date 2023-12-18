@@ -3,14 +3,17 @@
 #### rss.js
 此脚本用于从 RSS 订阅中获取种子，并向 Transmission 发送下载任务。它读取 rssFeeds.txt 文件，遍历所有 RSS 条目，根据历史记录排除已下载，获取所有新种子，并添加到 Transmission 中，然后更新历史记录。脚本目前只适用于 Transmission。
 
-#### rssFeeds.txt
+#### rssFeeds.sample.txt
 
 此文件包含要读取的 RSS 订阅。每一行都是一个新的 RSS。格式如下：
 ```
-# RSS源名称, RSS 地址, 是否需要通过代理访问
-DMHY,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
+# RSS源名称,BT或PT, RSS 地址, 是否需要通过代理访问
+DMHY,BT,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
+U2,PT,https://ut.dmhy.org/torrentrss.php?passkey=ffffffffffffffffffffffffffffffff&rsscart=1
 ```
 行开头有 '#' 是注释。非 RSS 订阅的说明文字，或者是你不想下载的 RSS 都可以注释掉。
+
+**实际使用前将其改名为 rssFeeds.txt。**
 
 #### config.sample.js
 如果使用代理，请将此文件重命名为 config.js 并修改内容。
@@ -33,8 +36,9 @@ DMHY,https://share.dmhy.org/topics/rss/team_id/816/rss.xml,true
     mv config.sample.js config.js
     nano config.js
     ```
-4. 将 RSS 订阅添加到 rssFeeds.txt
+4. 将 rssFeeds.sample.txt 改为为 rssFeeds.txt，将 RSS 订阅添加到 rssFeeds.txt
     ```bash
+    mv rssFeeds.sample.txt rssFeeds.txt
     nano rssFeeds.txt
     ```
 5. 运行 npm install 安装依赖项
