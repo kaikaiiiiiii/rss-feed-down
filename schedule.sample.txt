@@ -1,0 +1,11 @@
+# schedule to limit transmission's upload & download speed (KB) by time
+# 1 = Monday, ..., 6 = Saturday,7 = Sunday, 0 = every day
+# speed = 0 or < 0 means no limit
+# Weekday; time; downspeed; upspeed
+
+# default, every day no limit
+0; 0:00-24:00 ; 0; 0    
+
+1,2,3,4,5; 18:00-24:00; 10240; 2048
+1,2,3,4,5; 9:00-18:00; 20480; 3072
+6,7; 0:00-1:00,10:00-24:00; 10240; 2048
