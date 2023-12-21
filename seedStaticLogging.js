@@ -1,7 +1,9 @@
 const { readCSV, writeCSV, TransmissionRPC } = require('./util.js')
 const path = require('path');
 
-let selectedFields = ["hashString", "id", "status", "name", "uploadedEver", "totalSize", "dateCreated", "isPrivate", "isFinished", "addedDate"] // there's another segment "datePublish" from history
+// let selectedFields = ["hashString", "id", "status", "name", "uploadedEver", "totalSize", "dateCreated", "isPrivate",
+// "isFinished", "addedDate", 'webseeds', ""] // there's another segment "datePublish" from history
+let selectedFields = ["activityDate", "addedDate", "availability", "bandwidthPriority", "comment", "corruptEver", "creator", "dateCreated", "desiredAvailable", "doneDate", "downloadDir", "downloadedEver", "downloadLimit", "downloadLimited", "editDate", "error", "errorString", "eta", "etaIdle", "file-count", "files", "fileStats", "group", "hashString", "haveUnchecked", "haveValid", "honorsSessionLimits", "id", "isFinished", "isPrivate", "isStalled", "labels", "leftUntilDone", "magnetLink", "manualAnnounceTime", "maxConnectedPeers", "metadataPercentComplete", "name", "peer-limit", "peers", "peersConnected", "peersFrom", "peersGettingFromUs", "peersSendingToUs", "percentComplete", "percentDone", "pieces", "pieceCount", "pieceSize", "priorities", "primary-mime-type", "queuePosition", "rateDownload (B/s)", "rateUpload (B/s)", "recheckProgress", "secondsDownloading", "secondsSeeding", "seedIdleLimit", "seedIdleMode", "seedRatioLimit", "seedRatioMode", "sequentialDownload", "sizeWhenDone", "startDate", "status", "trackers", "trackerList", "trackerStats", "totalSize", "torrentFile", "uploadedEver", "uploadLimit", "uploadLimited", "uploadRatio", "wanted", "webseeds", "webseedsSendingToUs"]
 
 const transmissionOptions = {
     hostname: '192.168.0.49', port: 9091, // Transmission Daemon 的服务器 IP 和端口
@@ -10,7 +12,6 @@ const transmissionOptions = {
     fields: selectedFields
 };
 
-// let fields = ["activityDate", "addedDate", "availability", "bandwidthPriority", "comment", "corruptEver", "creator", "dateCreated", "desiredAvailable", "doneDate", "downloadDir", "downloadedEver", "downloadLimit", "downloadLimited", "editDate", "error", "errorString", "eta", "etaIdle", "file-count", "files", "fileStats", "group", "hashString", "haveUnchecked", "haveValid", "honorsSessionLimits", "id", "isFinished", "isPrivate", "isStalled", "labels", "leftUntilDone", "magnetLink", "manualAnnounceTime", "maxConnectedPeers", "metadataPercentComplete", "name", "peer-limit", "peers", "peersConnected", "peersFrom", "peersGettingFromUs", "peersSendingToUs", "percentComplete", "percentDone", "pieces", "pieceCount", "pieceSize", "priorities", "primary-mime-type", "queuePosition", "rateDownload (B/s)", "rateUpload (B/s)", "recheckProgress", "secondsDownloading", "secondsSeeding", "seedIdleLimit", "seedIdleMode", "seedRatioLimit", "seedRatioMode", "sequentialDownload", "sizeWhenDone", "startDate", "status", "trackers", "trackerList", "trackerStats", "totalSize", "torrentFile", "uploadedEver", "uploadLimit", "uploadLimited", "uploadRatio", "wanted", "webseeds", "webseedsSendingToUs"]
 
 /* Status
 0	Torrent is stopped
@@ -46,11 +47,13 @@ async function main() {
             let o = {
                 hashString: tor.hashString,
                 name: tor.name,
+                size: tor.totalSize,
                 upload: tor.uploadedEver,
                 datePublish: tor.datePublish,
                 timestamp: now,
                 datePubReadable: new Date(tor.datePublish * 1000).toLocaleString(),
                 timestampReadable: new Date(now * 1000).toLocaleString(),
+                trackerStats: JSON.stringify(tor.trackerStats),
             }
             return o
         })

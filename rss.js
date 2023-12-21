@@ -95,6 +95,7 @@ async function readRSS(rss, TMS) {
                     const newItems = list.filter(item => !history.some(e => e.guid == item.guid));
                     const downpath = rss.pt ? TMS.downloadDir : TMS.btpath
                     if (newItems.length > 0) {
+                        console.log(newItems.length + " new items found from " + rss.name)
                         for (const item of newItems) {
                             try {
                                 if (item.torrentLink.startsWith('magnet') || rss.useProxy == false) {

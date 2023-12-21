@@ -49,7 +49,7 @@ class TransmissionRPC {
         this.rpcURL = `http://${config.hostname}:${config.port}${config.path}`;
         this.auth = config.auth
         this.retry = config.retry || 3
-        this.fields = config.fields || ["hashString", "id", "status", "name", "isPrivate"]
+        this.fields = config.fields //|| ["hashString", "id", "status", "name", "uploadedEver", "totalSize", "dateCreated", "isPrivate", "isFinished", "addedDate"]
         this.downloadDir = ""
     }
 
