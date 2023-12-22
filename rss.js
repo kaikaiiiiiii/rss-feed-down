@@ -74,11 +74,15 @@ main()
 // function: read rss feeds and download torrent files or magnet links
 async function readRSS(rss, TMS) {
     return new Promise((resolve, reject) => {
+
         let config = { proxy: false };
         if (rss.useProxy) config.httpsAgent = TNL;
+
         axios.get(rss.url, config)
             .then(async (response) => {
+
                 try {
+
                     const feed = await parser.parseString(response.data);
                     const list = feed.items.map(item => {
                         return {
@@ -94,10 +98,13 @@ async function readRSS(rss, TMS) {
                     });
                     const newItems = list.filter(item => !history.some(e => e.guid == item.guid));
                     const downpath = rss.pt ? TMS.downloadDir : TMS.btpath
+
                     if (newItems.length > 0) {
                         console.log(newItems.length + " new items found from " + rss.name)
+
                         for (const item of newItems) {
                             try {
+
                                 if (item.torrentLink.startsWith('magnet') || rss.useProxy == false) {
                                     await TMS.addTorrent({ filename: item.torrentLink, labels: [item.source], "download-dir": downpath });
                                     await Delay(500);
@@ -108,6 +115,7 @@ async function readRSS(rss, TMS) {
                                     await Delay(5000);
                                 }
                                 history.push(item);
+
                             } catch (error) {
                                 console.log("ERR: " + error.message);
                             }
@@ -115,10 +123,12 @@ async function readRSS(rss, TMS) {
                         writeCSV(path.join(__dirname, 'history.csv'), history);
                     }
                     resolve(); // Resolve the promise if everything is successful
+
                 } catch (error) {
                     console.log("ERR: " + error.message);
                     reject(error); // Reject the promise if an error occurs
                 }
+
             })
             .catch((err) => {
                 console.log("ERR:" + err.message);
